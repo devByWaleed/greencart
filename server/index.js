@@ -3,6 +3,8 @@ import cookieParser from "cookie-parser"
 import cors from "cors"
 import connectDB from "./config/mongodb.js"
 import "dotenv/config"
+import userRouter from "./routes/userRoutes.js"
+import sellerRouter from "./routes/sellerRoutes.js"
 
 
 // Configuring server
@@ -22,6 +24,8 @@ app.use(cors({origin: allowedOrigin, credentials: true }))
 
 // API endpoints
 app.get('/', (req, res) => res.send("API Working!!!"));
+app.use('/api/user', userRouter)
+app.use('/api/seller', sellerRouter)
 
 
 // Start server
