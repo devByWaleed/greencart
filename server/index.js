@@ -8,6 +8,8 @@ import sellerRouter from "./routes/sellerRoutes.js"
 import connectCloudinary from "./config/cloudinary.js"
 import productRouter from "./routes/productRoutes.js"
 import cartRouter from "./routes/cartRoutes.js"
+import addressRouter from "./routes/addressRoutes.js"
+import orderRouter from "./routes/orderRoutes.js"
 
 
 // Configuring server
@@ -27,11 +29,12 @@ app.use(cors({origin: allowedOrigin, credentials: true }));
 
 
 // API endpoints
-app.get('/', (req, res) => res.send("API Working!!!"));
 app.use('/api/user', userRouter);
 app.use('/api/seller', sellerRouter);
 app.use('/api/product', productRouter);
 app.use('/api/cart', cartRouter);
+app.use('/api/address', addressRouter);
+app.use('/api/order', orderRouter);
 
 
 // Start server
