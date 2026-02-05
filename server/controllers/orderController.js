@@ -5,7 +5,8 @@ import ProductModel from "../models/Products.js";
 // Place Order COD : /api/order/cod
 export const placeOrderCOD = async (req, res) => {
     try {
-        const { userID, items, address } = req.body;
+        const { items, address } = req.body;
+        const userID = req.userID;
 
         if (!address || items.length === 0) {
             return res.json({ success: false, message: "Invalid data" })
@@ -37,7 +38,7 @@ export const placeOrderCOD = async (req, res) => {
 // Get Orders by UserID : /api/order/user
 export const getUserOrders = async (req, res) => {
     try {
-        const { userID } = req.body;
+        const userID = req.userID;
 
         const orders = await OrderModel.find({
             userID,

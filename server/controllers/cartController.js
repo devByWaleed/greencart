@@ -5,7 +5,8 @@ import UserModel from "../models/Users.js";
 // Update user cart : /api/cart/update
 export const updateCart = async (req, res) => {
     try {
-        const { userID, cartItems } = req.body;
+        const { cartItems } = req.body;
+        const userID = req.userID;
 
         await UserModel.findByIdAndUpdate(userID, { cartItems });
 

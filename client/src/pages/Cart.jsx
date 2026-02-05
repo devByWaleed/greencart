@@ -1,14 +1,14 @@
 import { useEffect, useState } from "react";
 import { useAppContext } from "../context/AppContext";
-import { assets, dummyAddress } from "../assets/assets";
+import { assets } from "../assets/assets";
 
 const Cart = () => {
-    const { products, navigate, currency, cartItems, removeFromCart, updateCartItem, getCartCount, getCartAmount } = useAppContext()
+    const { products, navigate, currency, cartItems, removeFromCart, updateCartItem, getCartCount, getCartAmount, axios, user } = useAppContext()
 
     const [cartArray, setCartArray] = useState([])
-    const [addresses, setAddresses] = useState(dummyAddress)
+    const [addresses, setAddresses] = useState([])
     const [showAddress, setShowAddress] = useState(false)
-    const [selectedAddress, setSelectedAddress] = useState(dummyAddress[0])
+    const [selectedAddress, setSelectedAddress] = useState(null)
     const [paymentOption, setPaymentOption] = useState("COD")
 
 
@@ -22,6 +22,21 @@ const Cart = () => {
         setCartArray(tempArray)
     }
 
+    const getUserAddress = async () => {
+        try {
+            const { data } = await axios.get("/api/address/get", { cartItems })
+
+            if (data.success) {
+                setAddresses(data.addresses)
+                if (data.addresses.length > 0) {
+                    setSelectedAddress(data.addresses[0])
+                }
+            }
+        } catch (error) {
+            toast.error(error.message)
+        }
+    }
+
     // Will add when work on backend
     const placeOrder = async () => { }
 
@@ -30,6 +45,13 @@ const Cart = () => {
             getCart()
         }
     }, [products, cartItems])
+    
+    
+    useEffect(() => {
+        if (user) {
+            getUserAddress()
+        }
+    }, [user])
 
 
     return products.length > 0 && cartItems ? (
@@ -60,9 +82,9 @@ const Cart = () => {
                                     <div className='flex items-center'>
                                         <p>Qty:</p>
                                         <select
-                                        onChange={(e) => updateCartItem(product._id, Number(e.target.value))}  
-                                        value={cartItems[product._id]}
-                                        className='outline-none'>
+                                            onChange={(e) => updateCartItem(product._id, Number(e.target.value))}
+                                            value={cartItems[product._id]}
+                                            className='outline-none'>
                                             {Array(cartItems[product._id] > 9 ? cartItems[product._id] : 9).fill('').map((_, index) => (
                                                 <option key={index} value={index + 1}>{index + 1}</option>
                                             ))}

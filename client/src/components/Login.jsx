@@ -3,7 +3,7 @@ import { useAppContext } from "../context/AppContext";
 
 const Login = () => {
 
-    const { setShowUserLogin, setUser } = useAppContext()
+    const { setShowUserLogin, setUser, axios, navigate } = useAppContext()
 
 
     const [state, setState] = useState("login");
@@ -12,14 +12,23 @@ const Login = () => {
     const [password, setPassword] = useState("");
 
     const onSubmitHandler = async(e) => {
-        e.preventDefault();
 
-        setUser({
-            email: "test@gmail.com",
-            name: "GreatStack",
+        try {
+            e.preventDefault();
+            const { data } = await axios.post(`/api/user/${state}`, {
+                name, email, password
+            })
 
-        })
-        setShowUserLogin(false)
+            if (data.success) {
+                navigate("/")
+                setUser(data.user)
+                setShowUserLogin(false)
+            } else {
+                toast.error(data.message)
+            }
+        } catch (error) {
+            toast.error(error.message)
+        }
     }
 
     return (
