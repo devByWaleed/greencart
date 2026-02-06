@@ -1,5 +1,6 @@
 import { useEffect } from "react"
 import { useLocation } from "react-router-dom"
+import { useAppContext } from "../context/AppContext.jsx"
 
 const Loading = () => {
 
@@ -24,5 +25,5 @@ const Loading = () => {
         </div>
     )
 }
-// loader?next=my-orders
+
 export default Loading
