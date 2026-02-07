@@ -33,6 +33,7 @@ app.use(cors({ origin: allowedOrigin, credentials: true }));
 
 
 // API endpoints
+app.get('/', (req, res) => res.send("API Working!!!"));
 app.use('/api/user', userRouter);
 app.use('/api/seller', sellerRouter);
 app.use('/api/product', productRouter);
