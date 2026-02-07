@@ -83,7 +83,8 @@ export const placeOrderStripe = async (req, res) => {
                     product_data: {
                         name: item.name,
                     },
-                    unit_amount: Math.floor(item.price + (item.price * 0.02) * 100)
+                    // Stripe is charging almost nothing
+                    unit_amount: Math.floor(item.price * 1.02 * 100)
                 },
                 quantity: item.quantity
             }
@@ -123,7 +124,7 @@ export const stripeWebhooks = async (req, res) => {
             process.env.STRIPE_WEBHOOK_SECRET
         )
     } catch (error) {
-        res.status(400).send(`Webhook Error: ${error.message}`)
+        return res.status(400).send(`Webhook Error: ${error.message}`)
     }
 
     // Handling the event
@@ -156,10 +157,12 @@ export const stripeWebhooks = async (req, res) => {
                 payment_intent: paymentIntentId
             })
 
+            if (!session.data.length) break
+
             const { orderId } = session.data[0].metadata
 
-            // Update paid status
-            await OrderModel.findByIdAndDelete(orderId)
+            // Delete the order
+            await OrderModel.findByIdAndUpdate(orderId, { isPaid: false })
             break;
         }
 
