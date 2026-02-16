@@ -111,6 +111,47 @@ export const placeOrderStripe = async (req, res) => {
 
 // Stripe Webhooks to verify payments action : /stripe
 export const stripeWebhooks = async (req, res) => {
+    const stripeInstance = new stripe(process.env.STRIPE_SECRET_KEY);
+    const sig = req.headers["stripe-signature"];
+    let event;
+
+    try {
+        event = stripeInstance.webhooks.constructEvent(
+            req.body, // This MUST be the raw buffer
+            sig,
+            process.env.STRIPE_WEBHOOK_SECRET
+        );
+    } catch (error) {
+        console.error("❌ Webhook Signature Failed:", error.message);
+        return res.status(400).send(`Webhook Error: ${error.message}`);
+    }
+
+    if (event.type === "checkout.session.completed") {
+        const session = event.data.object;
+        const { orderId, userID } = session.metadata;
+
+        try {
+            if (orderId && userID) {
+                // Use Promise.all to run both updates in parallel for speed
+                await Promise.all([
+                    OrderModel.findByIdAndUpdate(orderId, { isPaid: true }),
+                    UserModel.findByIdAndUpdate(userID, { cartItems: {} })
+                ]);
+                console.log(`✅ Order ${orderId} updated successfully.`);
+            }
+        } catch (dbError) {
+            console.error("❌ Database Update Failed:", dbError.message);
+            // Return a 500 so Stripe knows to retry the webhook later
+            return res.status(500).json({ success: false });
+        }
+    }
+
+    res.status(200).json({ received: true });
+};
+
+
+/*
+export const stripeWebhooks = async (req, res) => {
     // Stripe gateway initialize
     const stripeInstance = new stripe(process.env.STRIPE_SECRET_KEY)
 
@@ -173,6 +214,10 @@ export const stripeWebhooks = async (req, res) => {
     }
     res.json({ received: true })
 }
+*/
+
+
+
 
 
 // Get Orders by UserID : /api/order/user
