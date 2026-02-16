@@ -19,32 +19,8 @@ const port = process.env.PORT || 4000;
 
 // Allow multiple origins
 const allowedOrigin = ["http://localhost:5173", "https://grocery-eta-six.vercel.app"];
+app.use(cors({ origin: allowedOrigin, credentials: true }));
 
-// 2. Configure CORS Options
-const corsOptions = {
-    origin: function (origin, callback) {
-        // Allow requests with no origin (like mobile apps or curl)
-        if (!origin) return callback(null, true);
-
-        if (allowedOrigin.indexOf(origin) !== -1) {
-            callback(null, true);
-        } else {
-            callback(new Error('Not allowed by CORS'));
-        }
-    },
-    credentials: true,
-    methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
-    allowedHeaders: ['Content-Type', 'Authorization', 'stripe-signature']
-};
-
-// 3. APPLY MIDDLEWARE
-app.use(cors(corsOptions));
-
-// Handle pre-flight (OPTIONS) requests globally
-app.options('*', cors(corsOptions));
-
-// Configure Webhhoks
-app.post('/stripe', express.raw({ type: 'application/json' }), stripeWebhooks)
 
 await connectDB();
 await connectCloudinary();
@@ -52,7 +28,6 @@ await connectCloudinary();
 // Middleware configuration
 app.use(express.json());
 app.use(cookieParser());
-app.use(cors({ origin: allowedOrigin, credentials: true }));
 
 
 // API endpoints
