@@ -6,11 +6,12 @@ import sellerAuth from "../middleware/sellerAuth.js";
 
 const orderRouter = express.Router();
 
-orderRouter.post("/cod", userAuth, placeOrderCOD)
-orderRouter.post("/stripe", userAuth, placeOrderStripe)
+orderRouter.post("/stripe/webhook", express.raw({ type: 'application/json' }), stripeWebhooks);
+
+orderRouter.post("/cod", express.json(), userAuth, placeOrderCOD);
+orderRouter.post("/stripe", express.json(), userAuth, placeOrderStripe);
 orderRouter.get("/user", userAuth, getUserOrders)
 orderRouter.get("/seller", sellerAuth, getAllOrders)
-orderRouter.post("/stripe/webhook", express.raw({ type: 'application/json' }), stripeWebhooks);
 
 
 export default orderRouter

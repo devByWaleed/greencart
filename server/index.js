@@ -10,24 +10,29 @@ import productRouter from "./routes/productRoutes.js"
 import cartRouter from "./routes/cartRoutes.js"
 import addressRouter from "./routes/addressRoutes.js"
 import orderRouter from "./routes/orderRoutes.js"
-import { stripeWebhooks } from "./controllers/orderController.js"
 
 
 // Configuring server
 const app = express();
 const port = process.env.PORT || 4000;
 
+
 // Allow multiple origins
 const allowedOrigin = ["http://localhost:5173", "https://grocery-eta-six.vercel.app"];
-app.use(cors({ origin: allowedOrigin, credentials: true }));
+app.use(cors({
+    origin: allowedOrigin,
+    methods: ["GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS"],
+    allowedHeaders: ["Content-Type", "Authorization", "stripe-signature"],
+    credentials: true
+}));
 
+app.use(cookieParser());
 
-await connectDB();
-await connectCloudinary();
+// Contains Stripe raw webhook
+app.use('/api/order', orderRouter);
 
 // Middleware configuration
 app.use(express.json());
-app.use(cookieParser());
 
 
 // API endpoints
@@ -37,10 +42,19 @@ app.use('/api/seller', sellerRouter);
 app.use('/api/product', productRouter);
 app.use('/api/cart', cartRouter);
 app.use('/api/address', addressRouter);
-app.use('/api/order', orderRouter);
 
 
-// Start server
-app.listen(port, () => {
-    console.log(`Server is running on PORT: ${port}`);
-});
+await connectDB();
+await connectCloudinary();
+
+
+// Only listen if NOT running on Vercel
+if (process.env.NODE_ENV !== 'production') {
+    app.listen(port, () => {
+        console.log(`Server running on http://localhost:${port}`);
+    });
+}
+
+
+// Exporting for vercel configuration
+export default app;
