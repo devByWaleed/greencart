@@ -17,6 +17,8 @@ import AddProduct from './pages/seller/AddProduct'
 import Orders from './pages/seller/Orders'
 import ProductList from './pages/seller/ProductList'
 import Loading from './components/loading'
+import ResetPassword from './pages/ResetPassword'
+
 
 const App = () => {
 
@@ -41,6 +43,7 @@ const App = () => {
           <Route path='/add-address' element={<AddAddress />} />
           <Route path='/my-orders' element={<MyOrders />} />
           <Route path='/loader' element={<Loading />} />
+          <Route path='/reset-password' element={<ResetPassword />} />
 
           <Route path='/seller' element={isSeller ? <SellerLayout /> : <SellerLogin />}>
             <Route index element={isSeller ? <AddProduct /> : null} />

@@ -33,7 +33,7 @@ const Navbar = () => {
     }, [searchQuery])
 
     return (
-        <nav className="flex items-center justify-between px-6 md:px-16 lg:px-24 xl:px-32 py-4 border-b border-gray-300 bg-white relative transition-all">
+        <nav className="flex items-center justify-between px-6 md:px-16 lg:px-24 xl:px-32 py-4 border-b border-gray-300">
 
             <NavLink to='/' onClick={() => setOpen(false)}>
                 <img className='h-9' src={assets.logo} alt="Logo" />
@@ -41,9 +41,9 @@ const Navbar = () => {
 
             {/* Desktop Menu */}
             <div className="hidden sm:flex items-center gap-8">
+                <button onClick={() => navigate("/seller")} className='border border-gray-300 px-3 py-1 rounded-full text-xs cursor-pointer opacity-80'>Seller Dashboard</button>
                 <NavLink to="/">Home</NavLink>
-                <NavLink to="/products">About</NavLink>
-                <NavLink to="/">Contact</NavLink>
+                <NavLink to="/products">All Product</NavLink>
 
                 <div className="hidden lg:flex items-center text-sm gap-2 border border-gray-300 px-3 rounded-full">
                     <input onChange={(e) => setSearchQuery(e.target.value)} className="py-1.5 w-full bg-transparent outline-none placeholder-gray-500" type="text" placeholder="Search products" />
@@ -71,28 +71,28 @@ const Navbar = () => {
                 )}
             </div>
 
-            
+
             <div className='flex items-center gap-6 sm:hidden'>
                 <div onClick={() => navigate("/cart")} className="relative cursor-pointer">
                     <img src={assets.cart_icon} alt="Cart" className='w-6 opacity-80' />
                     <button className="absolute -top-2 -right-3 text-xs text-white bg-primary w-4.5 h-4.5 rounded-full">{getCartCount()}</button>
                 </div>
 
-            <button onClick={() => open ? setOpen(false) : setOpen(true)} aria-label="Menu" className="">
-                {/* Menu Icon SVG */}
-                <img src={assets.menu_icon} alt="Menu" className='w-4 h-4' />
-            </button>
+                <button onClick={() => open ? setOpen(false) : setOpen(true)} aria-label="Menu" className="">
+                    {/* Menu Icon SVG */}
+                    <img src={assets.menu_icon} alt="Menu" className='w-4 h-4' />
+                </button>
             </div>
 
             {/* Mobile Menu */}
             {open && (
-                <div className={`${open ? 'flex' : 'hidden'} absolute top-15 left-0 w-full bg-white shadow-md py-4 flex-col items-start gap-2 px-5 text-sm md:hidden`}>
+                <div className={`${open ? 'flex' : 'hidden'} absolute z-50 top-14.5 left-0 w-full bg-white shadow-md py-4 flex flex-col items-start gap-4 px-5 md:hidden`}>
                     <NavLink to="/" onClick={() => setOpen(false)} className="block">Home</NavLink>
                     <NavLink to="/products" onClick={() => setOpen(false)} className="block">All Products</NavLink>
                     {user &&
                         <NavLink to="/products" onClick={() => setOpen(false)} className="block">My Orders</NavLink>
                     }
-                    <NavLink to="/" onClick={() => setOpen(false)} className="block">Contact</NavLink>
+                    <button onClick={() => navigate("/seller")} className='border border-gray-300 px-3 py-1 rounded-full text-xs cursor-pointer opacity-80'>Seller Dashboard</button>
 
                     {!user ? (
 
