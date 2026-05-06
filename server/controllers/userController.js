@@ -1,6 +1,7 @@
 import UserModel from "../models/Users.js";
 import bcrypt from "bcryptjs"
 import jwt from "jsonwebtoken"
+import transporter from "../config/nodeMailer.js";
 
 
 // User registration : /api/user/register
@@ -89,7 +90,7 @@ export const login = async (req, res) => {
 
     catch (error) {
         console.log(error.message);
-        
+
         return res.json({ success: false, message: error.message })
     }
 }
@@ -104,7 +105,7 @@ export const isAuth = async (req, res) => {
 
         const user = await UserModel.findById(userID).select("-password")
 
-        return res.json({ success: true, user})
+        return res.json({ success: true, user })
     }
 
     catch (error) {
@@ -128,6 +129,99 @@ export const logout = async (req, res) => {
 
     catch (error) {
         console.log(error.message);
+        return res.json({ success: false, message: error.message })
+    }
+}
+
+
+// Password reset OTP : /api/user/send-reset-otp
+export const sendResetOTP = async (req, res) => {
+    const { email } = req.body;
+
+    if (!email) {
+        return res.json({
+            success: false,
+            message: "Email is required"
+        })
+    }
+
+    try {
+
+        const user = await UserModel.findOne({ email })
+
+        if (!user) {
+            return res.json({
+                success: false,
+                message: "User not found"
+            })
+        }
+
+        // Generating OTP
+        const otp = String(Math.floor(100000 + Math.random() * 90000))
+
+
+        // Sending OTP reset email
+        const mailOptions = {
+            from: process.env.SENDER_EMAIL,
+            to: user.email,
+            subject: "Password Reset OTP",
+            text: `Your OTP Is ${otp}. Reset your password using this OTP.`
+        }
+
+        await transporter.sendMail(mailOptions);
+
+        return res.json({ success: true, message: "OTP send to your email" })
+    }
+
+    catch (error) {
+        return res.json({ success: false, message: error.message })
+    }
+}
+
+
+
+
+
+// Reset user password : /api/user/reset-password
+export const resetPassword = async (req, res) => {
+    const { email, otp, newPassword } = req.body;
+
+    if (!email || !otp || !newPassword) {
+        return res.json({
+            success: false,
+            message: "Email,OTP, new password is required"
+        })
+    }
+
+    try {
+
+        const user = await UserModel.findOne({ email })
+
+        if (!user) {
+            return res.json({
+                success: false,
+                message: "User not found"
+            })
+        }
+
+        // if (user.resetOTP === "" || user.resetOTP !== otp) {
+        //     return res.json({
+        //         success: false,
+        //         message: "Invalid otp"
+        //     })
+        // }
+
+
+        const hashedPassword = await bcrypt.hash(newPassword, 10);
+
+        user.password = hashedPassword
+
+        await user.save();
+
+        return res.json({ success: true, message: "Password has been reset successfully" })
+    }
+
+    catch (error) {
         return res.json({ success: false, message: error.message })
     }
 }

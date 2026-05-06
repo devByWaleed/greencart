@@ -17,8 +17,13 @@ const Cart = () => {
         let tempArray = []
         for (const key in cartItems) {
             const product = products.find((item) => item._id === key);
-            product.quantity = cartItems[key]
-            tempArray.push(product)
+            // Safety Check
+            if (product) {
+                // skip deleted products silently
+                if (!product) continue;
+                product.quantity = cartItems[key]
+                tempArray.push(product)
+            }
         }
         setCartArray(tempArray)
     }
@@ -42,7 +47,7 @@ const Cart = () => {
     const placeOrder = async () => {
         try {
             if (!selectedAddress) {
-                return toast.error(error.message)
+                return toast.error("Please select a delivery address")
             }
             if (paymentOption === "COD") {
                 const { data } = await axios.post("/api/order/cod", {
@@ -59,7 +64,7 @@ const Cart = () => {
                 else {
                     toast.error(data.message)
                 }
-            } 
+            }
             else {
                 // Order with stripe (online)
                 const { data } = await axios.post("/api/order/stripe", {

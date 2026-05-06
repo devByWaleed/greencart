@@ -1,24 +1,16 @@
-import { useState, useRef } from "react"
+import { useState, useRef, useContext } from "react"
 import { assets } from "../assets/assets.js"
 import { useNavigate } from "react-router-dom"
-import { useContext } from "react"
-// import { AppContent } from "../context/AppContext"
-import axios from "axios"
 import toast from 'react-hot-toast'
 
 
 const ResetPassword = () => {
 
-	// const { backendURL } = useContext(AppContent)
-
-	axios.defaults.withCredentials = true
-
-	const navigate = useNavigate()
+	const { navigate, setShowUserLogin, axios } = useAppContext()
 
 	const [email, setEmail] = useState("")
 	const [newPassword, setNewPassword] = useState("")
 	const [isEmailSend, setIsEmailSend] = useState(false)
-	// const [OTP, setOTP] = useState("")
 	const OTPRef = useRef("")
 	const [isOTPSubmitted, setIsOTPsubmited] = useState(false)
 	const [showPassword, setShowPassword] = useState(false);
@@ -52,18 +44,14 @@ const ResetPassword = () => {
 	const onSubmitEmail = async (e) => {
 		e.preventDefault();
 		try {
+			const { data } = await axios.post("/api/user/send-reset-otp", { email })
 
-
-
-			// const { data } = await axios.post(backendURL + "/api/auth/send-reset-otp", { email })
-
-			// data.success ? toast.success(data.message) : toast.error(data.message)
-			// data.success && setIsEmailSend(true)
+			data.success ? toast.success(data.message) : toast.error(data.message)
+			data.success && setIsEmailSend(true)
 			setIsEmailSend(true)
 
 		} catch (error) {
-			console.error(error.message)
-			// toast.error(error.message)
+			toast.error(error.message)
 		}
 	}
 
@@ -90,10 +78,10 @@ const ResetPassword = () => {
 		e.preventDefault();
 		try {
 
-			const { data } = await axios.post(backendURL + "/api/auth/reset-password", { email, otp: OTPRef.current, newPassword })
+			const { data } = await axios.post("/api/user/reset-password", { email, otp: OTPRef.current, newPassword })
 
 			data.success ? toast.success(data.message) : toast.error(data.message)
-			data.success && navigate("/login")
+			data.success && setShowUserLogin(true)
 
 		} catch (error) {
 			toast.error(error.message)

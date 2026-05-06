@@ -16,7 +16,8 @@ export const AppContextProvider = ({ children }) => {
     const currency = import.meta.env.VITE_CURRENCY
 
     const navigate = useNavigate()
-    const [user, setUser] = useState(false)
+    const [user, setUser] = useState(null)
+    const [isAuthChecked, setIsAuthChecked] = useState(false)
     const [isSeller, setIsSeller] = useState(false)
     const [showUserLogin, setShowUserLogin] = useState(false)
     const [products, setProducts] = useState([])
@@ -49,9 +50,14 @@ export const AppContextProvider = ({ children }) => {
             if (data.success) {
                 setUser(data.user)
                 setCartItems(data.user.cartItems)
+            } else {
+                setUser(null)
             }
         } catch (error) {
             setUser(null)
+        }
+        finally {
+            setIsAuthChecked(true)   // auth check is done regardless of outcome
         }
     }
 
@@ -128,6 +134,9 @@ export const AppContextProvider = ({ children }) => {
         let totalAmount = 0;
         for (const items in cartItems) {
             let itemInfo = products.find((product) => product._id === items)
+            // Guard: skip if product was deleted from DB
+            if (!itemInfo) continue;
+
             if (cartItems[items] > 0) {
                 totalAmount += itemInfo.offerPrice * cartItems[items];
             }
@@ -156,13 +165,13 @@ export const AppContextProvider = ({ children }) => {
             }
         }
 
-        if (user) {
+        if (isAuthChecked && user) {
             updateCart()
         }
     }, [cartItems])
 
 
-    const value = { navigate, user, setUser, isSeller, setIsSeller, showUserLogin, setShowUserLogin, products, currency, addToCart, updateCartItem, removeFromCart, cartItems, setCartItems, searchQuery, setSearchQuery, getCartCount, getCartAmount, axios, fetchProducts }
+    const value = { navigate, user, setUser, isAuthChecked, isSeller, setIsSeller, showUserLogin, setShowUserLogin, products, currency, addToCart, updateCartItem, removeFromCart, cartItems, setCartItems, searchQuery, setSearchQuery, getCartCount, getCartAmount, axios, fetchProducts }
     return (
         <AppContext.Provider value={value}>
             {children}

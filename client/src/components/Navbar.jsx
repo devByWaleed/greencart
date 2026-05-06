@@ -90,7 +90,7 @@ const Navbar = () => {
                     <NavLink to="/" onClick={() => setOpen(false)} className="block">Home</NavLink>
                     <NavLink to="/products" onClick={() => setOpen(false)} className="block">All Products</NavLink>
                     {user &&
-                        <NavLink to="/products" onClick={() => setOpen(false)} className="block">My Orders</NavLink>
+                        <NavLink to="/my-orders" onClick={() => setOpen(false)} className="block">My Orders</NavLink>
                     }
                     <button onClick={() => navigate("/seller")} className='border border-gray-300 px-3 py-1 rounded-full text-xs cursor-pointer opacity-80'>Seller Dashboard</button>
 

@@ -30,7 +30,7 @@ const AddProduct = () => {
                 formData.append("images", files[i])
 
             }
-            
+
             const { data } = await axios.post("/api/product/add", formData)
 
             if (data.success) {
@@ -43,18 +43,18 @@ const AddProduct = () => {
                 setFiles([])
             } else {
                 console.log(data.message);
-                
+
                 toast.error(data.message)
             }
         } catch (error) {
             console.log(error.message);
-            
+
             toast.error(error.message)
         }
     }
 
     return (
-        <div className="no-scrollbar flex-1 h-[95vh] overflow-y-scroll flex flex-col justify-between">
+        <div className="no-scrollbar flex-1  overflow-y-scroll flex flex-col justify-between">
             <form onSubmit={onSubmitHandler} className="md:p-10 p-4 space-y-5 max-w-lg">
                 <div>
                     <p className="text-base font-medium">Product Image</p>
