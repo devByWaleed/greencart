@@ -156,9 +156,11 @@ export const sendResetOTP = async (req, res) => {
             })
         }
 
-        // Generating OTP
-        const otp = String(Math.floor(100000 + Math.random() * 90000))
+        // Generating OTP, guaranteed 6 digits
+        const otp = String(Math.floor(100000 + Math.random() * 900000))
 
+        const resetToken = jwt.sign({ email, otp }, process.env.JWT_SECRET, { expiresIn: '10m' })
+        res.cookie('resetToken', resetToken, { httpOnly: true, maxAge: 10 * 60 * 1000 })
 
         // Sending OTP reset email
         const mailOptions = {
@@ -179,18 +181,77 @@ export const sendResetOTP = async (req, res) => {
 }
 
 
+// Verify Reset OTP : /api/user/verify-reset-otp
+export const verifyResetOTP = async (req, res) => {
+    const { email, otp } = req.body;
+    const { resetToken } = req.cookies;
 
+    if (!email || !otp) {
+        return res.json({ success: false, message: "Email and OTP are required" });
+    }
+
+    if (!resetToken) {
+        return res.json({ success: false, message: "OTP expired. Please request a new one." });
+    }
+
+    try {
+        const decoded = jwt.verify(resetToken, process.env.JWT_SECRET);
+
+        if (decoded.email !== email) {
+            return res.json({ success: false, message: "Invalid request" });
+        }
+
+        if (decoded.otp !== otp) {
+            return res.json({ success: false, message: "Invalid OTP. Please try again." });
+        }
+
+        // OTP is correct — issue a verified token so reset-password knows OTP was checked
+        const verifiedToken = jwt.sign(
+            { email, otpVerified: true },
+            process.env.JWT_SECRET,
+            { expiresIn: '10m' }
+        );
+
+        res.cookie('resetVerified', verifiedToken, {
+            httpOnly: true,
+            maxAge: 10 * 60 * 1000,
+            secure: process.env.NODE_ENV === 'production',
+            sameSite: process.env.NODE_ENV === 'production' ? 'none' : 'strict'
+        });
+
+        // Clear the OTP token — it's been used
+        res.clearCookie('resetToken', {
+            httpOnly: true,
+            secure: process.env.NODE_ENV === 'production',
+            sameSite: process.env.NODE_ENV === 'production' ? 'none' : 'strict'
+        });
+
+        return res.json({ success: true, message: "OTP verified" });
+
+    } catch (error) {
+        // jwt.verify throws if token is expired
+        return res.json({ success: false, message: "OTP expired. Please request a new one." });
+    }
+}
 
 
 // Reset user password : /api/user/reset-password
 export const resetPassword = async (req, res) => {
-    const { email, otp, newPassword } = req.body;
+    const { email, newPassword } = req.body;
+    const { resetVerified } = req.cookies;
 
-    if (!email || !otp || !newPassword) {
+    if (!email || !newPassword) {
         return res.json({
             success: false,
             message: "Email,OTP, new password is required"
         })
+    }
+
+    if (!resetVerified) {
+        return res.json({
+            success: false,
+            message: "OTP not verified. Please start over."
+        });
     }
 
     try {
@@ -204,19 +265,23 @@ export const resetPassword = async (req, res) => {
             })
         }
 
-        // if (user.resetOTP === "" || user.resetOTP !== otp) {
-        //     return res.json({
-        //         success: false,
-        //         message: "Invalid otp"
-        //     })
-        // }
+        const decoded = jwt.verify(resetVerified, process.env.JWT_SECRET);
 
+        if (!decoded.otpVerified || decoded.email !== email) {
+            return res.json({ success: false, message: "Unauthorized. Please verify your OTP first." });
+        }
 
         const hashedPassword = await bcrypt.hash(newPassword, 10);
-
         user.password = hashedPassword
 
         await user.save();
+
+        // Clean up the verified cookie
+        res.clearCookie('resetVerified', {
+            httpOnly: true,
+            secure: process.env.NODE_ENV === 'production',
+            sameSite: process.env.NODE_ENV === 'production' ? 'none' : 'strict'
+        });
 
         return res.json({ success: true, message: "Password has been reset successfully" })
     }

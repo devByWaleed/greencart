@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useState, useRef } from 'react'
 import { NavLink } from 'react-router-dom'
 import { assets } from '../assets/assets.js'
 import { useAppContext } from '../context/AppContext.jsx'
@@ -7,6 +7,8 @@ import toast from "react-hot-toast";
 
 const Navbar = () => {
     const [open, setOpen] = useState(false)
+    const [localSearch, setLocalSearch] = useState("")
+    const debounceTimer = useRef(null)
     const { navigate, user, setUser, setShowUserLogin, searchQuery, setSearchQuery, getCartCount, axios } = useAppContext()
 
 
@@ -24,6 +26,22 @@ const Navbar = () => {
         } catch (error) {
             toast.error(error.message)
         }
+    }
+
+    // Debounce logic — only update global searchQuery after 300ms of no typing
+    const handleSearchChange = (e) => {
+        const value = e.target.value
+        setLocalSearch(value)  // update input immediately so UI feels responsive
+
+        // Clear the previous timer if user is still typing
+        if (debounceTimer.current) {
+            clearTimeout(debounceTimer.current)
+        }
+
+        // Set a new timer — only fires if user stops typing for 300ms
+        debounceTimer.current = setTimeout(() => {
+            setSearchQuery(value)
+        }, 300)
     }
 
     useEffect(() => {
@@ -46,7 +64,7 @@ const Navbar = () => {
                 <NavLink to="/products">All Product</NavLink>
 
                 <div className="hidden lg:flex items-center text-sm gap-2 border border-gray-300 px-3 rounded-full">
-                    <input onChange={(e) => setSearchQuery(e.target.value)} className="py-1.5 w-full bg-transparent outline-none placeholder-gray-500" type="text" placeholder="Search products" />
+                    <input onChange={handleSearchChange} value={localSearch} className="py-1.5 w-full bg-transparent outline-none placeholder-gray-500" type="text" placeholder="Search products" />
                     <img src={assets.search_icon} alt="Search" className='w-4 h-4' />
                 </div>
 
