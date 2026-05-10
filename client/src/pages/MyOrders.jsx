@@ -27,7 +27,7 @@ const MyOrders = () => {
 
 
     return (
-        <div className='mt-16 pb-16'>
+        <section className='mt-16 pb-16'>
             <div className='flex flex-col items-end w-max mb-8'>
                 <p className='text-2xl font-medium uppercase'>My Orders</p>
                 <div className='w-16 h-0.5 bg-primary rounded-full'></div>
@@ -47,8 +47,15 @@ const MyOrders = () => {
                                 } border-gray-300 flex flex-col md:flex-row md:items-center justify-between p-4 py-5 md:gap-16 w-full max-w-4xl`}>
 
                             <div className='flex items-center mb-4 md:mb-0'>
-                                <div className='rounded-lg bg-primary/10'>
-                                    <img src={item.product.image[0]} alt="Product" className='w-16 h-16' />
+                                <div className='rounded-lg text-primary-dark bg-primary/10'>
+                                    <img
+                                        src={getOptimizedImageUrl(item.product.image[0], 80)}
+                                        alt="Product"
+                                        className="w-16 h-16"
+                                        width={64}
+                                        height={64}
+                                        loading="lazy"
+                                    />
                                 </div>
 
                                 <div className='ml-4'>
@@ -71,7 +78,7 @@ const MyOrders = () => {
                     ))}
                 </div>
             ))}
-        </div>
+        </section>
     )
 }
 

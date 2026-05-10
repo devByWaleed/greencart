@@ -1,0 +1,8 @@
+User-agent: *
+Allow: /
+Disallow: /seller
+Disallow: /cart
+Disallow: /add-address
+Disallow: /my-orders
+
+Sitemap: https://grocery-eta-six.vercel.app/sitemap.xml

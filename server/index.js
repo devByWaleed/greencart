@@ -1,6 +1,7 @@
 import express from "express"
 import cookieParser from "cookie-parser"
 import cors from "cors"
+import helmet from "helmet"
 import connectDB from "./config/mongodb.js"
 import "dotenv/config"
 import userRouter from "./routes/userRoutes.js"
@@ -10,6 +11,7 @@ import productRouter from "./routes/productRoutes.js"
 import cartRouter from "./routes/cartRoutes.js"
 import addressRouter from "./routes/addressRoutes.js"
 import orderRouter from "./routes/orderRoutes.js"
+import reviewRouter from "./routes/reviewRoutes.js"
 
 
 // Configuring server
@@ -25,6 +27,23 @@ app.use(cors({
     allowedHeaders: ["Content-Type", "Authorization", "stripe-signature"],
     credentials: true
 }));
+
+
+// Set Security  Headers
+app.use(helmet({
+    contentSecurityPolicy: {
+        directives: {
+            defaultSrc: ["'self'"],
+            scriptSrc: ["'self'", "'unsafe-inline'"],   // React needs this in dev
+            imgSrc: ["'self'", "data:", "https://res.cloudinary.com"],
+            connectSrc: ["'self'", "https://api.stripe.com"],
+            styleSrc: ["'self'", "'unsafe-inline'", "https://fonts.googleapis.com"],
+            fontSrc: ["'self'", "https://fonts.gstatic.com"],
+        }
+    },
+    crossOriginOpenerPolicy: { policy: "same-origin" },
+    strictTransportSecurity: { maxAge: 31536000 }
+}))
 
 app.use(cookieParser());
 
@@ -42,6 +61,7 @@ app.use('/api/seller', sellerRouter);
 app.use('/api/product', productRouter);
 app.use('/api/cart', cartRouter);
 app.use('/api/address', addressRouter);
+app.use('/api/review', reviewRouter)
 
 
 await connectDB();

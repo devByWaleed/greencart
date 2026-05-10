@@ -4,8 +4,20 @@
 <head>
   <meta charset="UTF-8" />
   <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+  <!-- non-blocking font loading -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <!-- Preload as style, swap to stylesheet on load -->
+  <link rel="preload" href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700&display=swap"
+    as="style" onload="this.onload=null;this.rel='stylesheet'" />
+  <!-- Fallback for JS-disabled browsers -->
+  <noscript>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  </noscript>
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>GreenCart</title>
+  <meta name="description" content="GreenCart | Fresh groceries, vegetables, dairy, and snacks delivered to your door.
+    Shop online for the best prices." />
+  <title>GreenCart | Grocery Store</title>
 </head>
 
 <body>

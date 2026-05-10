@@ -103,7 +103,7 @@ const Cart = () => {
 
 
     return products.length > 0 && cartItems ? (
-        <div className="flex flex-col md:flex-row mt-16">
+        <section className="flex flex-col md:flex-row mt-16">
             <div className='flex-1 max-w-4xl'>
                 <h1 className="text-3xl font-medium mb-6">
                     Shopping Cart <span className="text-sm text-primary">{getCartCount()} Items</span>
@@ -119,9 +119,15 @@ const Cart = () => {
                     <div key={index} className="grid grid-cols-[2fr_1fr_1fr] text-gray-500 items-center text-sm md:text-base font-medium pt-3">
                         <div className="flex items-center md:gap-6 gap-3">
                             <div className="cursor-pointer w-24 h-24 flex items-center justify-center border border-gray-300 rounded overflow-hidden">
-                                <img onClick={() => {
-                                    navigate(`/products/${product.category.toLowerCase()}/${product._id}`); scrollTo(0, 0)
-                                }} className="max-w-full h-full object-cover" src={product.image[0]} alt={product.name} />
+                                <img
+                                    onClick={() => { navigate(`/products/${product.category.toLowerCase()}/${product._id}`); scrollTo(0, 0) }}
+                                    className="max-w-full h-full object-cover"
+                                    src={getOptimizedImageUrl(product.image[0], 120)}  // ← 120px for cart thumbnails
+                                    alt={product.name}
+                                    width={96}
+                                    height={96}
+                                    loading="lazy"
+                                />
                             </div>
                             <div>
                                 <p className="hidden md:block font-semibold">{product.name}</p>
@@ -212,7 +218,7 @@ const Cart = () => {
                     {paymentOption === "COD" ? "Place Order" : "Proceed to Checkout"}
                 </button>
             </div>
-        </div>
+        </section>
     ) : null
 }
 

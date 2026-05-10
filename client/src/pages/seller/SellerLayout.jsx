@@ -28,15 +28,15 @@ const SellerLayout = () => {
         } catch (error) {
             toast.error(error.message)
         }
-        
-        
+
+
     }
 
     return (
         <>
             <div className="flex items-center justify-between px-4 md:px-8 border-b border-gray-300 py-3 bg-white">
                 <Link to={"/"}>
-                    <img className="cursor-pointer w-34 md:w-38" src={assets.logo} alt="Logo" />
+                    <img className="cursor-pointer w-34 md:w-38" src={assets.logo} alt="App Logo" />
                 </Link>
                 <div className="flex items-center gap-5 text-gray-500">
                     <p>Hi! Admin</p>
@@ -49,12 +49,12 @@ const SellerLayout = () => {
                     {sidebarLinks.map((item) => (
                         <NavLink to={item.path} key={item.name} end={item.path === "/seller"}
                             className={({ isActive }) => `flex items-center py-3 px-4 gap-3 
-                            ${isActive ? "border-r-4 md:border-r-[6px] bg-primary/10 border-primary text-primary"
+                            ${isActive ? "border-r-4 md:border-r-[6px] bg-primary/10 border-primary text-primary-dark"
                                     : "hover:bg-gray-100/90 border-white"
                                 }`
                             }
                         >
-                            <img src={item.icon} alt="Icon" className='w-7 h-7' />
+                            <img src={item.icon} alt="Nav Icons" className='w-7 h-7' />
                             <p className="md:block hidden text-center">{item.name}</p>
                         </NavLink>
                     ))}

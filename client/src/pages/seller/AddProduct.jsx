@@ -42,19 +42,15 @@ const AddProduct = () => {
                 setOfferPrice("")
                 setFiles([])
             } else {
-                console.log(data.message);
-
                 toast.error(data.message)
             }
         } catch (error) {
-            console.log(error.message);
-
             toast.error(error.message)
         }
     }
 
     return (
-        <div className="no-scrollbar flex-1  overflow-y-scroll flex flex-col justify-between">
+        <section className="no-scrollbar flex-1  overflow-y-scroll flex flex-col justify-between">
             <form onSubmit={onSubmitHandler} className="md:p-10 p-4 space-y-5 max-w-lg">
                 <div>
                     <p className="text-base font-medium">Product Image</p>
@@ -67,7 +63,7 @@ const AddProduct = () => {
                                     setFiles(updatedFiles)
                                 }}
                                     accept="image/*" type="file" id={`image${index}`} hidden />
-                                <img className="max-w-24 cursor-pointer" src={files[index] ? URL.createObjectURL(files[index]) : assets.upload_area} alt="uploadArea" width={100} height={100} />
+                                <img className="max-w-24 cursor-pointer" src={files[index] ? URL.createObjectURL(files[index]) : assets.upload_area} alt="upload area" width={100} height={100} />
                             </label>
                         ))}
                     </div>
@@ -110,7 +106,7 @@ const AddProduct = () => {
                 </div>
                 <button className="px-8 py-2.5 bg-primary text-white font-medium rounded cursor-pointer">ADD</button>
             </form>
-        </div>
+        </section>
     );
 }
 

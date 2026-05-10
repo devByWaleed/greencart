@@ -110,7 +110,7 @@ const ResetPassword = () => {
 
 
 	return (
-		<div className="flex flex-col items-center gap-6 text-center min-h-screen justify-center px-4">
+		<section className="flex flex-col items-center gap-6 text-center min-h-screen justify-center px-4">
 			{/* 
 				*************************************
 				Email for resetting
@@ -134,7 +134,7 @@ const ResetPassword = () => {
 								<div className="absolute inset-y-0 left-0 flex items-center pl-4 pointer-events-none">
 									<img
 										src={assets.mail_icon}
-										alt=""
+										alt="Mail Icon"
 										className="w-5 opacity-50 group-focus-within:opacity-100 transition-opacity"
 									/>
 								</div>
@@ -256,7 +256,7 @@ const ResetPassword = () => {
 			}
 
 
-		</div>
+		</section>
 	)
 }
 

@@ -9,13 +9,15 @@ Users can browse products, add items to cart, place orders, and pay securely onl
 ### 👤 User Features
 
 * User authentication (JWT based)
+* Reset Password
 * Browse grocery products
 * Add / remove items from cart
 * Place orders (Cash on Delivery & Online Payment)
+* Add review by giving star ratings & message.
 * Secure checkout using **Stripe**
 * View order history
 
-### 🛍️ Admin / Seller Features
+### 🛍️ Seller Features
 
 * Add products
 * Upload product images (Cloudinary)
@@ -57,39 +59,18 @@ Users can browse products, add items to cart, place orders, and pay securely onl
 
 ---
 
-## 📁 Project Structure
-
-```
-grocery-store/
-│
-├── client/               # React frontend
-│   ├── src/
-│   └── package.json
-│
-├── server/               # Node + Express backend
-│   ├── controllers/
-│   ├── models/
-│   ├── routes/
-│   ├── middlewares/
-│   ├── config/
-│   └── index.js
-│
-└── README.md
-```
-
 
 ## 🔔 Stripe Webhooks
 
 Webhook endpoint:
 
 ```
-/stripe
+/stripe/webhook
 ```
 
 Handled events:
 
-* `payment_intent.succeeded`
-* `payment_intent.payment_failed`
+* `checkout.session.completed`
 
 Used to:
 
@@ -121,7 +102,7 @@ Frontend:
 ```bash
 cd client
 npm install
-npm start
+npm run dev
 ```
 
 
@@ -141,6 +122,7 @@ Response: "API Working!!!"
 * Secure Stripe webhook verification
 * CORS configuration
 * Environment variable protection
+* Security Headers
 
 
 ## 🌐 Live Preview
