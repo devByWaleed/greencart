@@ -34,6 +34,7 @@ import bakery_image from "./bakery_image.webp";
 import grain_image from "./grain_image.webp";
 import show_password from "./eye.svg"
 import hide_password from "./eye-slash.svg"
+import mail_icon from "./envelope.svg"
 
 
 export const assets = {
@@ -65,7 +66,8 @@ export const assets = {
   add_address_iamge,
   box_icon,
   show_password,
-  hide_password
+  hide_password,
+  mail_icon
 };
 
 
